@@ -44,6 +44,18 @@ public class MockData: Codable {
         return try? JSONDecoder().decode(MockData.self, from: data)
     }
     
+    public func convertAllChannelsOnly() -> [Channel] {
+        return MockData.fetch()!.convert().map { $0.channels }.reduce([], +)
+    }
+    
+    public func convertAllFeesOnly() -> [Fee] {
+        return convertAllChannelsOnly().map { $0.fees }.reduce([], +)
+    }
+    
+    public func convertAllBenefitsOnly() -> [Benefit] {
+        return convertAllFeesOnly().map { $0.benefits }.reduce([], +)
+    }
+    
     public func convert() -> [TargetSpecific] {
         let fees = Dictionary(uniqueKeysWithValues: self.fees.map { key, value in (key, value.map { $0.convert() }) })
         return targets.map { $0.convert(with: fees) }
