@@ -5,17 +5,17 @@ public class MockTarget: Codable {
     public let name: String
     public let channels: [String]
     
-    public func convert(with fees: [String: [Fee]]) -> TargetSpecific {
-        let channels = self.channels.map { Channel(id: UUID(), name: $0, fees: fees[$0]!) }
+    public func convert(with plans: [String: [Plan]]) -> TargetSpecific {
+        let channels = self.channels.map { Channel(id: UUID(), name: $0, plans: plans[$0]!) }
         return TargetSpecific(id: UUID(), title: name, channels: channels)
     }
 }
 
-public class MockFee: Codable {
+public class MockPlan: Codable {
     public let price: Double
     public let benefits: [String]
     
-    public func convert() -> Fee {
+    public func convert() -> Plan {
         let benefits: [Benefit] = self.benefits.map { str in
             if let match = str.match("[\\d.]+-[\\d.]+") {
                 let matches = match.split(separator: "-").map { Int(String($0))! }
@@ -27,13 +27,13 @@ public class MockFee: Codable {
             }
         }
         
-        return Fee(id: UUID(), price: price, benefits: benefits, type: .monthly)
+        return Plan(id: UUID(), price: price, benefits: benefits, type: .monthly)
     }
 }
 
 public class MockData: Codable {
     public let targets: [MockTarget]
-    public let fees: [String: [MockFee]]
+    public let plans: [String: [MockPlan]]
     
     private static var SPECS_JSON_URL: String {
         return ProcessInfo.processInfo.environment["SPECS_JSON"] ?? "https://jsonkeeper.com/b/SOLH"
@@ -48,17 +48,17 @@ public class MockData: Codable {
         return MockData.fetch()!.convert().map { $0.channels }.reduce([], +)
     }
     
-    public func convertAllFeesOnly() -> [Fee] {
-        return convertAllChannelsOnly().map { $0.fees }.reduce([], +)
+    public func convertAllPlansOnly() -> [Plan] {
+        return convertAllChannelsOnly().map { $0.plans }.reduce([], +)
     }
     
     public func convertAllBenefitsOnly() -> [Benefit] {
-        return convertAllFeesOnly().map { $0.benefits }.reduce([], +)
+        return convertAllPlansOnly().map { $0.benefits }.reduce([], +)
     }
     
     public func convert() -> [TargetSpecific] {
-        let fees = Dictionary(uniqueKeysWithValues: self.fees.map { key, value in (key, value.map { $0.convert() }) })
-        return targets.map { $0.convert(with: fees) }
+        let plans = Dictionary(uniqueKeysWithValues: self.plans.map { key, value in (key, value.map { $0.convert() }) })
+        return targets.map { $0.convert(with: plans) }
     }
 }
 
