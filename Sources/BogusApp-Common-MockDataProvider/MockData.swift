@@ -36,7 +36,7 @@ public class MockData: Codable {
     public let plans: [String: [MockPlan]]
     
     private static var SPECS_JSON_URL: String {
-        return ProcessInfo.processInfo.environment["SPECS_JSON"] ?? "https://jsonkeeper.com/b/SOLH"
+        return ProcessInfo.processInfo.environment["SPECS_JSON"] ?? "https://api.npoint.io/f7abcb83c8b4aabcb22d"
     }
     
     public static func fetch() -> MockData? {
