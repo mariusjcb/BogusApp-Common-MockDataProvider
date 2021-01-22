@@ -45,15 +45,15 @@ public class MockData: Codable {
     }
     
     public func convertAllChannelsOnly() -> [Channel] {
-        return MockData.fetch()!.convert().map { $0.channels }.reduce([], +)
+        return MockData.fetch()!.convert().map { $0.channels }.reduce([], +).orderedSet
     }
     
     public func convertAllPlansOnly() -> [Plan] {
-        return convertAllChannelsOnly().map { $0.plans }.reduce([], +)
+        return convertAllChannelsOnly().map { $0.plans }.reduce([], +).orderedSet
     }
     
     public func convertAllBenefitsOnly() -> [Benefit] {
-        return convertAllPlansOnly().map { $0.benefits }.reduce([], +)
+        return convertAllPlansOnly().map { $0.benefits }.reduce([], +).orderedSet
     }
     
     public func convert() -> [TargetSpecific] {
