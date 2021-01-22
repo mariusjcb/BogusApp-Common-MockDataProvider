@@ -1,6 +1,12 @@
 import Foundation
 import BogusApp_Common_Models
 
+// It is required for Linux environments to use Type(contentsOf:)
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
+
 public class MockTarget: Codable {
     public let name: String
     public let channels: [String]
